@@ -4,12 +4,13 @@
 int Limit;
 const int CONTEXT_SWITCH_TIME = 2;
 
-//processStatus = 1 means completed.
 
 struct process
 {
 	int processId, arrivalTime, burstTime, waitingTime, turnAroundTime, priority;
-	int processStatus, remainingTime;
+
+	//processStatus = 1 means completed.
+	int processStatus, completionTime, num_of_switch;
 };
 
 void arrivalTimeSorting(struct process *processQueue)
@@ -26,36 +27,38 @@ void arrivalTimeSorting(struct process *processQueue)
 				temp = processQueue[j];
 				processQueue[j] = processQueue[i];
 				processQueue[i] = temp;
-			} 
+			}
 		}
-	} 
+	}
 }
 
 int scheduler(struct process *processQueue, int time, int currentProcess)
 {
 
-        for (int i = 0 ; i < Limit+1 ; i++)
+        for (int i = 0 ; i < Limit ; i++)
         {
                 if(processQueue[i].arrivalTime <= time && processQueue[currentProcess].priority > processQueue[i].priority && processQueue[i].processStatus != 1)
                 {
                         currentProcess = i;
                 }
         }
-        return processQueue[currentProcess].processId;	
+
+        //printf("%d", processQueue[currentProcess].processId);
+        return processQueue[currentProcess].processId;
 }
 
 int main()
 {
 
-	int totalBurstTime=0, pid = 1, maxArrivalTime=0;
-	
+	int totalBurstTime=0, pid = 0, maxArrivalTime=0;
+
 	printf("\nEnter the total number of processes: ");
 	scanf("%d", &Limit);
 	struct process processQueue[Limit+1];
 
 	//variable for selecting among the process which will be executed next
-	int currentProcess = Limit+1;
-	processQueue[Limit+1].priority = 1,000;
+	int currentProcess = Limit, previous = Limit;
+	processQueue[Limit].priority = 1,000;
 
 	for (int i = 0 ; i<Limit ; i++, pid++)
 	{
@@ -74,14 +77,18 @@ int main()
 		//priority
 		printf("\nEnter the priority: ");
 		scanf("%d", &processQueue[i].priority);
-		
-		totalBurstTime += processQueue[i].priority;	
+
+		totalBurstTime += processQueue[i].burstTime;
+		processQueue[i].processStatus = 0;
+		processQueue[i].num_of_switch = 0;
 
 	}
 
 	//sorting according to arrival time
 	arrivalTimeSorting(processQueue);
-	
+
+	printf("\nProcess ID\tArrival Time\tBurst Time\tPriority\tWaiting Time\tTurn Around Time");
+
 	for(int i =0; i< Limit; i++)
 	{
 	        if(processQueue[i].arrivalTime > maxArrivalTime)
@@ -89,16 +96,41 @@ int main()
 	                        maxArrivalTime = processQueue[i].arrivalTime;
 			}
 	}
-	
-	printf("%d", maxArrivalTime);
-	 
 
-	/*for(int time = 0; time < totalBurstTime; )
+	
+
+	for(int time = 0; time < totalBurstTime; )
 	{
+
 	        currentProcess = scheduler(processQueue, time, currentProcess);
-	        
-	        processQueue[currentProcess].burstTime--;	
-	}*/
+
+		if(previous != currentProcess)
+		{
+			processQueue[previous].num_of_switch++;
+		}
+
+	        time += processQueue[currentProcess].burstTime;
+
+	        processQueue[currentProcess].currentTime = time;
+
+	        //Waiting time = Start of execution time - arrival time + Context Switch time
+	        processQueue[currentProcess].waitingTime = processQueue[currentProcess].currentTime - processQueue[currentProcess].arrivalTime - processQueue[currentProcess].burstTime + (processQueue[currentProcess].num_of_switch*CONTEXT_SWITCH_TIME);
+
+	        //Turn around time = Time of completion of execution - Arrival time
+	        processQueue[currentProcess].turnAroundTime = processQueue[currentProcess].currentTime - processQueue[currentProcess].arrivalTime;
+
+		if(processQueue[currentProcess].currentTime == processQueue[currentProcess].burstTime)
+		{
+			processQueue[currentProcess].processStatus = 1;
+		}
+
+	        printf("\n%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d", processQueue[currentProcess].processId+1, processQueue[currentProcess].arrivalTime, processQueue[currentProcess].burstTime, processQueue[currentProcess].priority, processQueue[currentProcess].waitingTime, processQueue[currentProcess].turnAroundTime);
+
+		previous = currentProcess;
+	}
+
+
+	printf("\n");
 
 	return 0;
 }
