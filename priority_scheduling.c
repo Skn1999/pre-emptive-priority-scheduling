@@ -51,7 +51,8 @@ void priorityScheduling(struct process *processQueue)
 
 int main()
 {
-
+  
+  int avgWaitingTime = 0, avgTurnaroundTime =0 ;
   printf("Enter the number of processes : ");
   scanf("%d", &num);
 
@@ -189,6 +190,15 @@ int main()
   {
     printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", processQueue[i].pid, processQueue[i].arrivalTime, processQueue[i].burstTime, processQueue[i].priority, processQueue[i].waitingTime,processQueue[i].turnAroundTime);
   }
+
+  for (i =0 ; i< num; i++)
+  {
+  	avgWaitingTime += processQueue[i].waitingTime;
+  	avgTurnaroundTime += processQueue[i].turnAroundTime;
+  }
+  
+  printf("\nThe average waiting time is %d", avgWaitingTime/num);
+  printf("\nThe average turnaround time is %d", avgTurnaroundTime/num);
 
 
   printf("\n");
