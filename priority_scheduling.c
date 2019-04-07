@@ -132,7 +132,7 @@ int main()
       {
         processQueue[current].processStatus =1;
         time = time + processQueue[current].burstTime;
-        processQueue[current].completionTime = time ;
+        processQueue[current].completionTime = time + 1 ;
         processQueue[current].waitingTime = processQueue[current].completionTime - processQueue[current].arrivalTime - processQueue[current].burstTime + numOfSwitch*2;
         processQueue[current].turnAroundTime = processQueue[current].completionTime - processQueue[current].arrivalTime;
       }
