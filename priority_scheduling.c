@@ -70,12 +70,22 @@ int main()
 		printf("\nEnter the details for P[%d]", pid);
 
 		//arrival time
-		printf("\nEnter the arrival time : ");
+		arrive: printf("\nEnter the arrival time : ");
 		scanf("%d", &processQueue[i].arrivalTime);
+		if(processQueue[i].arrivalTime < 0)
+		{
+			printf("Arrival time must be greater than or equal to zero.");
+			goto arrive; 
+		}
 
 		//burst time
-		printf("\nEnter the burst time: ");
+		burst: printf("\nEnter the burst time: ");
 		scanf("%d", &processQueue[i].burstTime);
+		if(processQueue[i].burstTime <= 0)
+		{
+			printf("Burst time should be greater than 0.");
+			goto burst;
+		}
 		processQueue[i].bt = processQueue[i].burstTime;
 
 		//priority
