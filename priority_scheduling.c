@@ -179,6 +179,8 @@ int main()
 
 
   }
+	
+  arrivalTimeSorting(processQueue);
 
   //printing data of the processes
   printf("\nProcess ID\tArrival Time\tBurst Time\tPriority\tWaiting Time\tTurn Around Time\n");
