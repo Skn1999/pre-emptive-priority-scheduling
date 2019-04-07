@@ -109,7 +109,7 @@ int main()
   {
 
     //this part will run untill all processes arrive.
-    if( time < maxArrivalTime)
+    if( time <= maxArrivalTime)
     {
       for(i = 0 ; i < num ; i++)
       {
